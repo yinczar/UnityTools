@@ -24,7 +24,7 @@ public class Interactive_Rotate : MonoBehaviour, IDragHandler, IEndDragHandler
 
     [Range(1f, 30f)]
     /// <summary>    ///  复位速度    /// </summary>
-    public float resetSpeed =9f;
+    public float resetSpeed = 9f;
     /// <summary>    /// 鼠标拖拽速度    /// </summary>
     public float dragSpeed_Mouse = 5f;
     [Range(0f, 1f)]
@@ -52,6 +52,7 @@ public class Interactive_Rotate : MonoBehaviour, IDragHandler, IEndDragHandler
     }
 
     [Space(15)]
+    public GameObject canvas;
     public Slider slider_rotateSpeed;
     public Slider slider_DampSpeed;
     public Slider slider_DragSpeed_Touch;
@@ -61,7 +62,8 @@ public class Interactive_Rotate : MonoBehaviour, IDragHandler, IEndDragHandler
     public Text text_DragSpeed_Touch;
     void Awake()
     {
-#if  !UNITY_EDITOR
+#if !UNITY_EDITOR
+        canvas.SetActive(true);
         slider_rotateSpeed.value = rotateSpeed;
         slider_DampSpeed.value = dampSpeed;
         slider_DragSpeed_Touch.value = dragSpeed_Touch;
@@ -144,10 +146,10 @@ public class Interactive_Rotate : MonoBehaviour, IDragHandler, IEndDragHandler
                 }
             }
         }
-       
-    
 
-       
+
+
+
 
 
     }
@@ -202,9 +204,8 @@ public class Interactive_Rotate : MonoBehaviour, IDragHandler, IEndDragHandler
 #endif
 
         cXY = Mathf.Sqrt(axisX * axisX + axisY * axisY);
-        if (cXY == 0f) { cXY = 1f; }
-
-            this.transform.Rotate(new Vector3(axisY, axisX, 0) * dragSpeed, Space.World);
+        if (cXY == 0f)  cXY = 1f; 
+        this.transform.Rotate(new Vector3(axisY, axisX, 0) * dragSpeed, Space.World);
     }
 
 
