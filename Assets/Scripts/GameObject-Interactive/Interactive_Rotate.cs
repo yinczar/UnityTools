@@ -11,6 +11,10 @@ public class Interactive_Rotate : MonoBehaviour, IDragHandler, IEndDragHandler
     public bool selfRotate = true;
     /// <summary>    /// 是否需要复位    /// </summary>
     public bool needReset = true;
+    /// <summary>    ///  可旋转X轴    /// </summary>
+    public bool allowRotateAxisX = true;
+    /// <summary>    ///  可旋转Y轴    /// </summary>
+    public bool allowRotateAxisY = true;
     [Range(0f, 1f)]
     /// <summary>    ///  旋转速度   /// </summary>
     public float rotateSpeed = 0.2f;
@@ -25,7 +29,7 @@ public class Interactive_Rotate : MonoBehaviour, IDragHandler, IEndDragHandler
     public float dragSpeed_Mouse = 5f;
     [Range(0f, 1f)]
     /// <summary>    /// 触摸拖拽速度    /// </summary>
-    public float dragSpeed_Touch = 0.5f;
+    public float dragSpeed_Touch = 0.6f;
 
     /// <summary>    ///  拖拽状态    /// </summary>
     private bool isDragging = false;
@@ -47,6 +51,41 @@ public class Interactive_Rotate : MonoBehaviour, IDragHandler, IEndDragHandler
         Right
     }
 
+    [Space(15)]
+    public Slider slider_rotateSpeed;
+    public Slider slider_DampSpeed;
+    public Slider slider_DragSpeed_Touch;
+    [Space(10)]
+    public Text text_rotateSpeed;
+    public Text text_DampSpeed;
+    public Text text_DragSpeed_Touch;
+    void Awake()
+    {
+#if  !UNITY_EDITOR
+        slider_rotateSpeed.value = rotateSpeed;
+        slider_DampSpeed.value = dampSpeed;
+        slider_DragSpeed_Touch.value = dragSpeed_Touch;
+        slider_rotateSpeed.onValueChanged.AddListener((float value) =>
+        {
+            rotateSpeed = value;
+            text_rotateSpeed.GetComponentInChildren<Text>().text = "rotateSpeed : " + value.ToString();
+        });
+        slider_DampSpeed.onValueChanged.AddListener((float value) =>
+        {
+            dampSpeed = value;
+            text_DampSpeed.GetComponentInChildren<Text>().text = "DampSpeed : " + value.ToString();
+        });
+        slider_DragSpeed_Touch.onValueChanged.AddListener((float value) =>
+        {
+            dragSpeed_Touch = value;
+            text_DragSpeed_Touch.GetComponentInChildren<Text>().text = "DragSpeed_Touch : " + value.ToString();
+        });
+#endif
+    }
+
+
+
+
 
     private void Update()
     {
@@ -59,11 +98,21 @@ public class Interactive_Rotate : MonoBehaviour, IDragHandler, IEndDragHandler
         {
             if (damping > 0f)
             {
+#if UNITY_EDITOR
                 damping -= dampSpeed * 100f * Time.deltaTime / cXY; //通过除以鼠标移动长度实现拖拽越长速度减缓越慢// 
                 if (axisX < 0f)
                     this.transform.Rotate(Vector3.up * Time.deltaTime * -damping * dampSpeed * 100f);
                 else if (axisX > 0f)
                     this.transform.Rotate(Vector3.up * Time.deltaTime * damping * dampSpeed * 100f);
+#elif UNITY_ANDROID || UNITY_IOS
+             damping -= dampSpeed*4f * 100f * Time.deltaTime / cXY; //通过除以鼠标移动长度实现拖拽越长速度减缓越慢// 
+                if (axisX < 0f)
+                    this.transform.Rotate(Vector3.up * Time.deltaTime * -damping * dampSpeed*4f * 100f);
+                else if (axisX > 0f)
+                    this.transform.Rotate(Vector3.up * Time.deltaTime * damping * dampSpeed*4f * 100f);
+#endif
+
+
             }
             else
             {
@@ -72,7 +121,7 @@ public class Interactive_Rotate : MonoBehaviour, IDragHandler, IEndDragHandler
                 if (!Mathf.Approximately(this.transform.rotation.x, Quaternion.identity.x) && needReset)
                 {
                     // X轴复位
-                    if (Mathf.Abs(this.transform.rotation.x - Quaternion.identity.x) < 0.0001f)
+                    if (Mathf.Abs(this.transform.rotation.x - Quaternion.identity.x) < 0.00001f)
                     {
                         this.transform.rotation = Quaternion.identity;
                     }
@@ -116,7 +165,8 @@ public class Interactive_Rotate : MonoBehaviour, IDragHandler, IEndDragHandler
 #if UNITY_EDITOR
         damping = rotateSpeed * 100f;
 #elif UNITY_ANDROID || UNITY_IOS
-         damping = rotateSpeed *5f;
+         damping = rotateSpeed *12f;
+
 #endif
 
     }
@@ -153,7 +203,8 @@ public class Interactive_Rotate : MonoBehaviour, IDragHandler, IEndDragHandler
 
         cXY = Mathf.Sqrt(axisX * axisX + axisY * axisY);
         if (cXY == 0f) { cXY = 1f; }
-        this.transform.Rotate(new Vector3(axisY, axisX, 0) * dragSpeed, Space.World);
+
+            this.transform.Rotate(new Vector3(axisY, axisX, 0) * dragSpeed, Space.World);
     }
 
 
