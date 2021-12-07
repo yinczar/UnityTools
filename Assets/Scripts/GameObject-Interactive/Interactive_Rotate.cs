@@ -11,10 +11,6 @@ public class Interactive_Rotate : MonoBehaviour, IDragHandler, IEndDragHandler
     public bool selfRotate = true;
     /// <summary>    /// 是否需要复位    /// </summary>
     public bool needReset = true;
-    /// <summary>    ///  可旋转X轴    /// </summary>
-    public bool allowRotateAxisX = true;
-    /// <summary>    ///  可旋转Y轴    /// </summary>
-    public bool allowRotateAxisY = true;
     [Range(0f, 1f)]
     /// <summary>    ///  旋转速度   /// </summary>
     public float rotateSpeed = 0.2f;
@@ -123,7 +119,7 @@ public class Interactive_Rotate : MonoBehaviour, IDragHandler, IEndDragHandler
                 if (!Mathf.Approximately(this.transform.rotation.x, Quaternion.identity.x) && needReset)
                 {
                     // X轴复位
-                    if (Mathf.Abs(this.transform.rotation.x - Quaternion.identity.x) < 0.00001f)
+                    if (Mathf.Abs(this.transform.rotation.x - Quaternion.identity.x) < 0.00001f )
                     {
                         this.transform.rotation = Quaternion.identity;
                     }
@@ -183,7 +179,7 @@ public class Interactive_Rotate : MonoBehaviour, IDragHandler, IEndDragHandler
 
 
 
-    private float cXY;
+    private  float cXY;
     private float axisX = 0f;
     private float axisY = 0f;
     private float dragSpeed = 0f;
@@ -204,8 +200,10 @@ public class Interactive_Rotate : MonoBehaviour, IDragHandler, IEndDragHandler
 #endif
 
         cXY = Mathf.Sqrt(axisX * axisX + axisY * axisY);
-        if (cXY == 0f)  cXY = 1f; 
-        this.transform.Rotate(new Vector3(axisY, axisX, 0) * dragSpeed, Space.World);
+        if (cXY == 0f)  cXY = 1f;
+     
+            this.transform.Rotate(new Vector3(axisY, axisX, 0) * dragSpeed, Space.World);
+     
     }
 
 
